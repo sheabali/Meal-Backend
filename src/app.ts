@@ -35,8 +35,8 @@ app.get('/', (req: Request, res: Response) => {
         </style>
       </head>
       <body>
-        <h1>🍕 Meal Box API 🚀</h1>
-        <p>Fresh & customized meals delivered to your doorstep!</p>
+        <h1>🌱 Plant API 🚀</h1>
+        <p>Fresh & Plant delivered to your doorstep!</p>
       </body>
     </html>
   `);
