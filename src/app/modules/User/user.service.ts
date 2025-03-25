@@ -38,6 +38,8 @@ const registerUser = async (userData: IUser) => {
     const profile = new Customer({
       user: createdUser._id,
     });
+    await profile.save({ session });
+
     session.commitTransaction();
     return await AuthService.loginUser({
       email: createdUser.email,
