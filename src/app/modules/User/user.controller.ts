@@ -2,22 +2,33 @@ import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { UserServices } from './user.service';
+import { Request, Response } from 'express';
+import config from '../../config';
 
-const createStudent = catchAsync(async (req, res) => {
-  const { password, student: studentData } = req.body;
+const registerUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await UserServices.registerUser(req.body);
 
-  const result = await UserServices.createUserIntoDB(password, studentData);
+  const { refreshToken, accessToken } = result;
+
+  res.cookie('refreshToken', refreshToken, {
+    secure: config.NODE_ENV === 'production',
+    httpOnly: true,
+    sameSite: 'none',
+    maxAge: 1000 * 60 * 60 * 24 * 365,
+  });
 
   sendResponse(res, {
     statusCode: StatusCodes.OK,
     success: true,
-    message: 'User is created succesfully',
-    data: result,
+    message: 'User registration completed successfully!',
+    data: {
+      accessToken,
+    },
   });
 });
 
 export const UserControllers = {
-  createStudent,
+  registerUser,
   // createFaculty,
   // createAdmin,
 };

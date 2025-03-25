@@ -1,45 +1,38 @@
-import { Types } from 'mongoose';
+import { Document, Model } from 'mongoose';
 
-// import { Schema, model, connect } from 'mongoose';
-export type UserName = {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-};
+// Enum for User Roles
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
 
-export type Guardian = {
-  fatherName: string;
-  fatherOccupation: string;
-  fatherContactNo: string;
-  motherName: string;
-  motherOccupation: string;
-  motherContactNo: string;
-};
-
-export type LocalGuardian = {
-  name: string;
-  occupation: string;
-  contactNo: string;
-  address: string;
-};
-
-export type TStudent = {
-  id: string;
-  user: Types.ObjectId;
-  password: string;
-  name: UserName;
-  gender: 'male' | 'female';
-  dateOfBirth?: string;
-  contactNo: string;
-  emergencyContactNo: string;
-  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
-  presentAddress: string;
-  permanentAddress: string;
-  guardian: Guardian;
-  localGuardian: LocalGuardian;
-  admissionSemester: Types.ObjectId;
-  academicDepartment: Types.ObjectId;
-  profileImg?: string;
+// User Schema Definition
+export interface IUser extends Document {
   email: string;
-  isDeleted: boolean;
-};
+  password: string;
+  name: string;
+  role: UserRole;
+  clientInfo: {
+    device: 'pc' | 'mobile'; // Device type
+    browser: string; // Browser name
+    ipAddress: string; // User IP address
+    pcName?: string; // Optional PC name
+    os?: string; // Optional OS name (Windows, MacOS, etc.)
+    userAgent?: string; // Optional user agent string
+  };
+  lastLogin: Date;
+  isActive: boolean;
+  otpToken?: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserModel extends Model<IUser> {
+  //instance methods for checking if passwords are matched
+  isPasswordMatched(
+    plainTextPassword: string,
+    hashedPassword: string
+  ): Promise<boolean>;
+  isUserExistsByEmail(id: string): Promise<IUser>;
+  checkUserExist(userId: string): Promise<IUser>;
+}

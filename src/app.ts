@@ -22,7 +22,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send(`
     <html>
       <head>
-        <title>Meal Box API</title>
+        <title>Plant API</title>
         <style>
           body { font-family: 'Arial', sans-serif; text-align: center; padding: 50px; background-color: #222; color: white; }
           h1 { font-size: 3em; color: #ffcc00; animation: pulse 1.5s infinite; }
