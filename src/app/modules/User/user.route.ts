@@ -11,3 +11,4 @@ router.post(
   validateRequest(UserValidation.userValidationSchema),
   UserControllers.createStudent
 );
+export const UserRoutes = router;
