@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import AppError from '../../errors/AppError';
 import User from './user.model';
 import Customer from '../Customer/customer.modal';
+import { AuthService } from '../Auth/auth.service';
 
 // Function to register user
 const registerUser = async (userData: IUser) => {
@@ -37,8 +38,19 @@ const registerUser = async (userData: IUser) => {
     const profile = new Customer({
       user: createdUser._id,
     });
+    session.commitTransaction();
+    return await AuthService.loginUser({
+      email: createdUser.email,
+      password: userData.password,
+      clientInfo: userData.clientInfo,
+    });
   } catch (err: any) {
-    console.log(err);
+    if (session.inTransaction()) {
+      await session.abortTransaction();
+    }
+    throw err;
+  } finally {
+    session.endSession();
   }
 };
 
