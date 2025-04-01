@@ -14,7 +14,7 @@ import handleCastError from '../errors/handleCastError';
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
   //setting default values
   let statusCode = 500;
-  let message = 'Something went wrong!66';
+  let message = 'Something went wrong!';
   let errorSources: TErrorSources = [
     {
       path: '',
