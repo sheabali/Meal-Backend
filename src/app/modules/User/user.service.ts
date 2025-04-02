@@ -13,7 +13,7 @@ const registerUser = async (userData: IUser) => {
   try {
     session.startTransaction();
 
-    if ([UserRole.ADMIN].includes(userData.role)) {
+    if ([UserRole.MEAL_PROVIDER].includes(userData.role)) {
       throw new AppError(
         StatusCodes.NOT_ACCEPTABLE,
         'Invalid role. Only User is allowed.'
@@ -58,6 +58,4 @@ const registerUser = async (userData: IUser) => {
 
 export const UserServices = {
   registerUser,
-  // createFacultyIntoDB,
-  // createAdminIntoDB,
 };
