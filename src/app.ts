@@ -24,7 +24,7 @@ app.get('/', (req: Request, res: Response) => {
   res.send(`
     <html>
       <head>
-        <title>Plant API</title>
+        <title>Meal Box API</title>
         <style>
           body { font-family: 'Arial', sans-serif; text-align: center; padding: 50px; background-color: #222; color: white; }
           h1 { font-size: 3em; color: #ffcc00; animation: pulse 1.5s infinite; }
@@ -37,8 +37,8 @@ app.get('/', (req: Request, res: Response) => {
         </style>
       </head>
       <body>
-        <h1>🌱 Plant API 🚀</h1>
-        <p>Fresh & Plant delivered to your doorstep!</p>
+        <h1>🌱 Meal Box API 🚀</h1>
+        <p>Fresh Foods delivered to your doorstep!</p>
       </body>
     </html>
   `);
