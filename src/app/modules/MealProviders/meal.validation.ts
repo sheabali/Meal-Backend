@@ -1,21 +1,36 @@
 import { z } from 'zod';
 
-export const createMealValidation = z
-  .object({
-    name: z.string({ required_error: 'Meal name is required' }).nonempty(),
+export const createMealValidationSchema = z.object({
+  body: z.object({
+    name: z
+      .string({ required_error: 'Meal name is required' })
+      .min(1, 'Meal name cannot be empty'),
+
     description: z
       .string({ required_error: 'Meal description is required' })
-      .nonempty(),
+      .min(1, 'Meal description cannot be empty'),
+
     ingredients: z
       .array(z.string({ required_error: 'Ingredients are required' }))
-      .nonempty(),
+      .min(1, 'At least one ingredient is required'),
+
     portionSize: z
       .string({ required_error: 'Portion size is required' })
-      .nonempty(),
-    price: z.number({ required_error: 'Price is required' }).positive(),
-    availability: z.boolean(),
-  })
-  .strict();
+      .min(1, 'Portion size cannot be empty'),
+
+    price: z
+      .number({ required_error: 'Price is required' })
+      .positive('Price must be greater than 0'),
+
+    availability: z.boolean().optional(),
+
+    image: z.string().url('Image must be a valid URL').optional(),
+
+    ratings: z.number().min(0).max(5).optional().default(0),
+    totalRatings: z.number().min(0).optional().default(0),
+    isDeleted: z.boolean().optional().default(false),
+  }),
+});
 
 export const updateMealValidation = z
   .object({
