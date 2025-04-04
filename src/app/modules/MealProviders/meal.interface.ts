@@ -1,6 +1,5 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
-// ✅ Define TypeScript Interface for Meals
 export interface IMeal extends Document {
   mealProviderId: Types.ObjectId;
   name: string;
