@@ -11,12 +11,12 @@ const createMeal = catchAsync(async (req, res) => {
     // req.user as IJwtPayload
   );
   console.log('result', req.files);
-  // sendResponse(res, {
-  //   statusCode: StatusCodes.CREATED,
-  //   success: true,
-  //   message: 'Meal created successfully',
-  // data: mealData,
-  // });
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    success: true,
+    message: 'Meal created successfully',
+    data: mealData,
+  });
 });
 
 export const MealController = { createMeal };
