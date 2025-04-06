@@ -10,6 +10,8 @@ import { UserRole } from '../User/user.interface';
 
 const router = Router();
 
+router.get('/my-menu', auth(UserRole.MEAL_PROVIDER), MealController.getMyMenu);
+
 router.post(
   '/menu',
   auth(UserRole.MEAL_PROVIDER),
