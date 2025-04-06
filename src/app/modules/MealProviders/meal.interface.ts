@@ -4,7 +4,7 @@ export interface IMeal extends Document {
   mealProviderId: Types.ObjectId;
   name: string;
   description: string;
-  image?: string;
+  image?: string[];
   ingredients: string[];
   portionSize: string;
   price: number;
