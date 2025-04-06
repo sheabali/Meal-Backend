@@ -6,7 +6,6 @@ import { MealService } from './meal.service';
 import { IJwtPayload } from '../Auth/auth.interface';
 
 const createMeal = catchAsync(async (req, res) => {
-  console.log('result', req.user);
   const result = await MealService.createMeal(
     req.body,
     req.files as IImageFiles,

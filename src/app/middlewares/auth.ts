@@ -1,19 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserRole } from '../modules/User/user.interface';
-import catchAsync from '../utils/catchAsync';
-import AppError from '../errors/AppError';
-import { StatusCodes } from 'http-status-codes';
-import config from '../config';
 import jwt, { JwtPayload, TokenExpiredError } from 'jsonwebtoken';
+import config from '../config';
+
+import catchAsync from '../utils/catchAsync';
+import { StatusCodes } from 'http-status-codes';
+import { UserRole } from '../modules/User/user.interface';
+import AppError from '../errors/AppError';
 import User from '../modules/User/user.model';
 
 const auth = (...requiredRoles: UserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const token = req.body.headers.authorization;
+    const token = req.headers.authorization;
 
     if (!token) {
       throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
     }
+
     try {
       const decoded = jwt.verify(
         token,
@@ -21,11 +23,13 @@ const auth = (...requiredRoles: UserRole[]) => {
       ) as JwtPayload;
 
       const { role, email } = decoded;
-      const user = await User.findOne({ email, role });
+
+      const user = await User.findOne({ email, role, isActive: true });
 
       if (!user) {
         throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found!');
       }
+
       if (requiredRoles && !requiredRoles.includes(role)) {
         throw new AppError(StatusCodes.UNAUTHORIZED, 'You are not authorized!');
       }
@@ -45,3 +49,5 @@ const auth = (...requiredRoles: UserRole[]) => {
     }
   });
 };
+
+export default auth;

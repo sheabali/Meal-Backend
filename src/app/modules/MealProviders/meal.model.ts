@@ -18,7 +18,10 @@ const MealSchema = new Schema<IMeal>(
       required: true,
       maxlength: [500, 'Description too long'],
     },
-    image: { type: String },
+    image: {
+      type: [String],
+      required: true,
+    },
     ingredients: { type: [String], required: true },
     portionSize: { type: String, required: true },
     price: {

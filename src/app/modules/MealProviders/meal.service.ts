@@ -12,33 +12,24 @@ const createMeal = async (
   productImages: IImageFiles,
   user: IJwtPayload
 ) => {
-  console.log('user', user);
   const provider = await User.findOne({
-    _id: user,
+    _id: user.userId,
     role: UserRole.MEAL_PROVIDER,
   });
   if (!provider) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
   }
   const { images } = productImages;
+
   if (!images || images.length === 0) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'Meal images are required.');
   }
 
   productData.image = images.map((image) => image.path);
 
-  // const isCategoryExists = await Category.findById(productData.category);
-  // if (!isCategoryExists) {
-  //   throw new AppError(StatusCodes.BAD_REQUEST, 'Category does not exist!');
-  // }
-
-  // if (!isCategoryExists.isActive) {
-  //   throw new AppError(StatusCodes.BAD_REQUEST, 'Category is not active!');
-  // }
-
   const newProduct = new Meal({
     ...productData,
-    shop: shop._id,
+    // shop: shop._id,
   });
 
   const result = await newProduct.save();
