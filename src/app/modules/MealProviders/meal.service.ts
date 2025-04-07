@@ -6,22 +6,34 @@ import { Meal } from './meal.model';
 import { IJwtPayload } from '../Auth/auth.interface';
 import User from '../User/user.model';
 import { UserRole } from '../User/user.interface';
+import QueryBuilder from '../../builder/QueryBuilder';
 
 const getMyMenu = async (
   query: Record<string, unknown>,
   authUser: IJwtPayload
 ) => {
-  const result = await Meal.find({ mealProviderId: authUser.userId }).populate(
-    'mealProviderId'
-  );
+  const mealsQuery = new QueryBuilder(Meal.find({ isDeleted: false }), query)
+    .search(['name', 'description', 'ingredients'])
+    .filter()
+    .sort()
+    .paginate();
+  const meals = await mealsQuery.modelQuery.exec();
+  const meta = await mealsQuery.getMetaData();
 
-  return result;
+  return {
+    meta: { ...meta },
+    meals: meals,
+  };
 };
 const getSingleMeal = async (
   menuId: string,
   query: Record<string, unknown>,
   authUser: IJwtPayload
 ) => {
+  const meal = await Meal.findById(menuId);
+  if (!meal) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Meal not found');
+  }
   const result = await Meal.findById(menuId);
   return result;
 };
