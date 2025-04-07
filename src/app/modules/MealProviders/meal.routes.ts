@@ -11,6 +11,12 @@ import { UserRole } from '../User/user.interface';
 const router = Router();
 
 router.get('/my-menu', auth(UserRole.MEAL_PROVIDER), MealController.getMyMenu);
+router.get(
+  '/:menuId',
+  auth(UserRole.MEAL_PROVIDER),
+
+  MealController.getSingleMeal
+);
 
 router.post(
   '/menu',
@@ -19,6 +25,14 @@ router.post(
   parseBody,
   validateRequest(createMealValidationSchema),
   MealController.createMeal
+);
+
+router.patch(
+  '/:menuId',
+  auth(UserRole.MEAL_PROVIDER),
+  multerUpload.fields([{ name: 'images' }]),
+  parseBody,
+  MealController.updateMeal
 );
 
 export const MealRoutes = router;
