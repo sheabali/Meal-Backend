@@ -27,7 +27,7 @@ const getMyMenu = async (
 };
 const getSingleMeal = async (
   menuId: string,
-  query: Record<string, unknown>,
+  // query: Record<string, unknown>,
   authUser: IJwtPayload
 ) => {
   const meal = await Meal.findById(menuId);
