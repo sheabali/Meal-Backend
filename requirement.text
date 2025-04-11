@@ -1,0 +1,199 @@
+# Meal Box - 🍱 (Personalized Meal Planning & Delivery) B4A6V3
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#meal-box-----personalized-meal-planning--delivery-b4a6v3)
+
+### Project Overview:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#project-overview)
+
+You are tasked with developing a **Meal Planning & Delivery Web Application** where users can personalize their meal plans and have meals delivered based on their dietary preferences and schedules. The platform should allow customers to choose meal options, set dietary preferences, and schedule deliveries, while meal providers can manage menus and respond to customer requests.
+
+### Key Features:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#key-features)
+
+#### 1. User Authentication:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#1-user-authentication)
+
+- Custom login system for customers and meal providers using email or phone number and password.
+- Use of **JWT (JSON Web Tokens)** for authentication, ensuring secure login.
+- Password hashing using **bcrypt** for added security.
+
+#### 2. Customer and Meal Provider Dashboards:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#2-customer-and-meal-provider-dashboards)
+
+- **Customer Dashboard:** For selecting meal plans, tracking orders, and managing preferences.
+- **Meal Provider Dashboard:** For managing meal menus, responding to customer orders, and tracking deliveries.
+
+#### 3. Meal Selection & Preferences:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#3-meal-selection--preferences)
+
+- Customers can select meal plans and customize meals based on dietary preferences (vegan, keto, gluten-free, etc.).
+- Meal providers can create and update meal options, specifying ingredients, portion sizes, and pricing.
+
+#### 4. Search and Match:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#4-search-and-match)
+
+- Customers can search for meals based on cuisine, dietary preferences, ratings, and availability.
+- Meal providers can view customer meal preferences and prepare orders accordingly.
+
+#### 5. Role-Based Access Control:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#5-role-based-access-control)
+
+- Different routes and views for customers and meal providers, each with access to platform-specific features.
+- **Admin access** (if implemented) will be used to manage users and content.
+
+#### 6. CRUD Operations:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#6-crud-operations)
+
+- Customers can **create, view, and update** their meal plans and preferences.
+- Meal providers can **view and respond** to customer meal requests.
+
+### Tech Stack:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#tech-stack)
+
+#### Frontend:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#frontend)
+
+- **Next.js** (for SSR/SSG)
+- **TypeScript** for type safety
+- **React** for building user interfaces
+
+#### Backend:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#backend)
+
+- **Node.js with Express** for REST APIs
+- **MongoDB** for storing data (users, meal menus, orders)
+- **JWT** for authentication
+- **bcrypt** for password hashing
+
+#### Deployment:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#deployment)
+
+- **Frontend:** Vercel, Netlify, or similar
+- **Backend:** Heroku, AWS, or similar
+
+### Frontend Requirements:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#frontend-requirements)
+
+#### Routes for Customers:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#routes-for-customers)
+
+- **Home Page (/):** Overview of the platform and its benefits for customers.
+- **Login Page (/login):** Customers can log in using their email/phone number and password.
+    - **Customer Dashboard (/dashboard/customer):Select Meals:** Customers can browse available meal options and customize their orders.
+    - **Track Orders:** View past and ongoing meal deliveries.
+    - **Manage Preferences:** Set dietary restrictions, preferred cuisines, and portion sizes.
+- **Customer Profile (/profile/customer):** Customers can edit personal details (name, email, phone number, delivery address, etc.).
+- **Find Meals (/find-meals):** Customers can search for meals based on preferences, ratings, and meal providers.
+- **Order Meal (/order-meal):** Customers can place meal orders, including schedule and customization options.
+
+#### Routes for Meal Providers:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#routes-for-meal-providers)
+
+1. **Home Page (/):** Overview of the platform, benefits, and how meal providers can manage menus and respond to orders.
+2. **Login Page (/login):** Meal providers log in using email/phone number and password.
+3. **Meal Provider Dashboard (/dashboard/provider):Manage Menus:** Meal providers can create and update their meal offerings.
+    - **View Orders:** List of customer orders and their preferences.
+    - **Respond to Orders:** Accept, modify, or decline meal requests.
+4. **Meal Provider Profile (/profile/provider):**Edit meal provider profile, including cuisine specialties, pricing, and availability.
+5. **Post Meal Menu (/post-meal-menu):**Meal providers can post detailed meal menus for customers to browse.
+6. **Order Responses (/responses):**Meal providers can confirm or decline customer orders.
+
+### Backend Requirements:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#backend-requirements)
+
+#### Database Collections (MongoDB):
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#database-collections-mongodb)
+
+- - **Users Collection:**Fields: Name, email, phone number, password (hashed), role (customer or meal provider), and any other necessary details.
+    - Stores user credentials and roles for authentication and authorization.
+    - **Orders Collection:**Fields: Meal selection, dietary preferences, customer ID, status (pending, in progress, delivered).
+    - Tracks all meal orders placed by customers.
+    - **Meal Providers Collection:**Fields: Cuisine specialties, available meal options, pricing, experience, customer reviews, etc.
+    - Stores meal provider profiles that customers can browse.
+
+#### Authentication:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#authentication)
+
+- Use **JWT** for handling user sessions securely.
+- Implement **bcrypt** for password hashing.
+- Custom **middleware for protected routes** to ensure that only authorized users (customers and meal providers) can access their respective dashboards.
+
+#### CRUD Operations:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#crud-operations)
+
+- - **Customers:**`POST /customers/order`: Create a new meal order.
+    - `GET /customers/orders`: Retrieve all orders placed by the customer.
+    - `PUT /customers/profile`: Update customer profile.
+    - **Meal Providers:**`POST /providers/menu`: Create or update meal menu.
+    - `GET /providers/orders`: Retrieve all customer orders.
+    - `PUT /providers/response`: Respond to customer orders.
+
+### UI/UX Design:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#uiux-design)
+
+- **Responsive Design:** Mobile-friendly, optimized for all devices.
+- **Modern UI/UX:** Simple navigation, clear calls to action, and easily accessible features.
+- **User-friendly Interface:** Easy-to-use forms for placing orders, managing preferences, and search filters.
+
+### Additional Features:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#additional-features)
+
+#### Meal Ordering:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#meal-ordering)
+
+- Customers can place meal orders with detailed dietary preferences and delivery schedules.
+
+#### Meal Provider Profiles:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#meal-provider-profiles)
+
+- Meal providers can create detailed profiles, including cuisines, pricing, and availability.
+
+#### Search and Match:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#search-and-match)
+
+- Customers can search meals based on dietary preferences, ratings, and provider availability.
+- Meal providers can view customer preferences and prepare meals accordingly.
+
+#### Email Notifications:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#email-notifications)
+
+- **For Customers:** Email updates when meals are prepared and out for delivery.
+- **For Meal Providers:** Email when a new order is placed.
+
+#### Role-Based Access:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#role-based-access)
+
+- Customers and meal providers have different access roles.
+
+### Deployment:
+
+[](https://github.com/Apollo-Level2-Web-Dev/batch-4-assignment-6/blob/main/3-MealBox.md#deployment-1)
+
+- **Frontend:** Deploy using Vercel or similar platforms.
+- **Backend:** Deploy using Heroku or similar platforms.
