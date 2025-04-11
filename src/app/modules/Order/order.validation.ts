@@ -1,23 +1,23 @@
 import { z } from 'zod';
-import { Types } from 'mongoose';
 
-const objectIdSchema = z.string().refine((val) => Types.ObjectId.isValid(val), {
-  message: 'Invalid ObjectId',
-});
-
-export const orderSchema = z.object({
-  customerId: objectIdSchema,
-  mealId: objectIdSchema,
-  mealProviderId: objectIdSchema,
-  amount: z.number().positive(),
-  customization: z.string(),
-  schedule: z.coerce.date(),
-  deliveryAddress: z.string().min(1, 'Delivery address is required'),
-  status: z.enum(['PENDING', 'ACCEPTED', 'DELIVERED', 'CANCELLED']),
-  paymentStatus: z.enum(['PENDING', 'PAID']),
-  isDeleted: z.boolean(),
-  paymentIntentId: z.string().optional(),
-});
+export const createOrderValidationSchema = z
+  .object({
+    paymentMethodId: z.string({
+      required_error: 'PaymentMethodId is required',
+    }),
+    customerId: z.string().min(1, 'Customer ID is required'),
+    mealId: z.string().min(1, 'Meal ID is required'),
+    customization: z.string().optional(), // Customization is optional
+    schedule: z
+      .string()
+      .min(1, 'Schedule is required')
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message:
+          'Invalid schedule format. Use ISO 8601 format (YYYY-MM-DDTHH:MM:SSZ).',
+      }),
+    deliveryAddress: z.string().min(1, 'Delivery address is required'),
+  })
+  .strict();
 
 export const updateOrderStatusValidationSchema = z
   .object({
