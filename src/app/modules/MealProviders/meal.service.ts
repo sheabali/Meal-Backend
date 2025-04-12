@@ -66,8 +66,6 @@ const createMeal = async (
     mealProviderId: provider?.id,
   });
 
-  console.log('newProduct', newProduct);
-
   const result = await newProduct.save();
   return result;
 };
@@ -77,7 +75,6 @@ const updateMeal = async (
   mealImages: IImageFiles,
   user: IJwtPayload
 ) => {
-  console.log('productId', productId);
   const meal = await Meal.findById(productId);
   if (!meal) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Meal not found');
