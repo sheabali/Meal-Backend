@@ -2,7 +2,10 @@ import { Router } from 'express';
 import auth from '../../middlewares/auth';
 import { UserRole } from '../User/user.interface';
 import { OrderController } from './order.controller';
-import { updateOrderStatusValidationSchema } from './order.validation';
+import {
+  createOrderValidationSchema,
+  updateOrderStatusValidationSchema,
+} from './order.validation';
 import validateRequest from '../../middlewares/validateRequest';
 
 const router = Router();
@@ -10,7 +13,7 @@ const router = Router();
 router.post(
   '/',
   auth(UserRole.CUSTOMER, UserRole.MEAL_PROVIDER),
-  // validateRequest(createOrderValidationSchema),
+  validateRequest(createOrderValidationSchema),
   OrderController.createOrder
 );
 

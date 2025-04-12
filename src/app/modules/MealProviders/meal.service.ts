@@ -12,6 +12,14 @@ const getMyMenu = async (
   query: Record<string, unknown>,
   authUser: IJwtPayload
 ) => {
+  const user = await User.findOne({
+    _id: authUser.userId,
+    role: UserRole.MEAL_PROVIDER,
+  });
+
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
+  }
   const mealsQuery = new QueryBuilder(Meal.find({ isDeleted: false }), query)
     .search(['name', 'description', 'ingredients'])
     .filter()
@@ -30,6 +38,13 @@ const getSingleMeal = async (
   query: Record<string, unknown>,
   authUser: IJwtPayload
 ) => {
+  const user = await User.findOne({
+    _id: authUser.userId,
+    role: UserRole.MEAL_PROVIDER,
+  });
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
+  }
   const meal = await Meal.findById(menuId);
   if (!meal) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Meal not found');
