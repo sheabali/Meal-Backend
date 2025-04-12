@@ -19,8 +19,10 @@ export const createOrderValidationSchema = z
   })
   .strict();
 
-export const updateOrderStatusValidationSchema = z
-  .object({
-    status: z.enum(['PENDING', 'ACCEPTED', 'DELIVERED', 'CANCELLED']),
-  })
-  .strict();
+export const updateOrderStatusValidationSchema = z.object({
+  body: z
+    .object({
+      status: z.enum(['PENDING', 'ACCEPTED', 'DELIVERED', 'CANCELLED']),
+    })
+    .strict(),
+});

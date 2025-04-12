@@ -8,6 +8,7 @@ import User from '../User/user.model';
 import { StatusCodes } from 'http-status-codes';
 import { Order } from './order.model';
 import config from '../../config';
+import { IUser, UserRole } from '../User/user.interface';
 
 const stripe = new Stripe(config.stripe_secret_key as string, {
   apiVersion: '2025-03-31.basil',
@@ -102,6 +103,59 @@ const createOrder = async (orderData: IOrder, authUser: IJwtPayload) => {
   }
 };
 
+const getOrders = async (user: IUser, query: Record<string, unknown>) => {
+  console.log('user', user); // geting user successfully
+
+  const customer = await User.findOne({
+    _id: user.userId,
+  });
+
+  console.log('customer', customer); // geting customer successfully
+
+  if (!customer) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Customer not found');
+  }
+
+  const { role } = customer;
+  let orders;
+  if (role === UserRole.CUSTOMER) {
+    orders = await Order.find({ customerId: user._id })
+      .populate('meals')
+      .populate('mealProviderId');
+  } else if (role === UserRole.MEAL_PROVIDER) {
+    orders = await Order.find({ mealProviderId: user._id })
+      .populate('meals')
+      .populate('customerId');
+  } else {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Access denied');
+  }
+  if (!orders) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'No orders found');
+  }
+  return orders;
+};
+
+const updateOrderStatus = async (
+  status: 'PENDING' | 'ACCEPTED' | 'DELIVERED' | 'CANCELLED',
+  id: string
+) => {
+  const order = await Order.findById(id);
+  if (!order) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
+  }
+  console.log('params', id); // geting params successfully
+  console.log('status', status); // geting status successfully
+  const result = await Order.findByIdAndUpdate(
+    id,
+    { status: status },
+    { new: true }
+  );
+  return result;
+};
+
+// Exporting the OrderService object containing the methods
 export const OrderService = {
   createOrder,
+  getOrders,
+  updateOrderStatus,
 };

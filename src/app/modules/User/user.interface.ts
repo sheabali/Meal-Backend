@@ -1,4 +1,4 @@
-import { Document, Model } from 'mongoose';
+import { Document, Model, ObjectId } from 'mongoose';
 
 // Enum for User Roles
 export enum UserRole {
@@ -8,6 +8,7 @@ export enum UserRole {
 
 // User Schema Definition
 export interface IUser extends Document {
+  [x: string]: any | ObjectId;
   email: string;
   password: string;
   name: string;
