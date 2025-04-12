@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose, { Schema, Types } from 'mongoose';
 import bcrypt from 'bcrypt';
 import { IUser, UserModel, UserRole } from './user.interface';
 import config from '../../config';
@@ -98,6 +98,12 @@ userSchema.statics.isPasswordMatched = async function (
 
 userSchema.statics.isUserExistsByEmail = async function (email: string) {
   return await User.findOne({ email }).select('+password');
+};
+
+userSchema.statics.isUserExistsByCustomId = async function (
+  id: string | Types.ObjectId
+) {
+  return await User.findById(id).select('+password');
 };
 
 userSchema.statics.checkUserExist = async function (userId: string) {

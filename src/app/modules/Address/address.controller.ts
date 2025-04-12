@@ -1,9 +1,14 @@
 import { StatusCodes } from 'http-status-codes';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
+import { AddressService } from './address.service';
+import { IUser } from '../User/user.interface';
 
 const createAddress = catchAsync(async (req, res) => {
-  const result = await AddressService.createAddress(req.body, req.user);
+  const result = await AddressService.createAddress(
+    req.body,
+    req.user as IUser
+  );
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

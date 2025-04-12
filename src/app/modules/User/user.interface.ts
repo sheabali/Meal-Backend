@@ -1,4 +1,4 @@
-import { Document, Model, ObjectId } from 'mongoose';
+import { Document, Model, ObjectId, Types } from 'mongoose';
 
 // Enum for User Roles
 export enum UserRole {
