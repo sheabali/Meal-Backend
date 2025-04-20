@@ -24,8 +24,6 @@ export const createMealValidationSchema = z.object({
 
     availability: z.boolean().optional(),
 
-    image: z.string().url('Image must be a valid URL').optional(),
-
     ratings: z.number().min(0).max(5).optional().default(0),
     totalRatings: z.number().min(0).optional().default(0),
     isDeleted: z.boolean().optional().default(false),

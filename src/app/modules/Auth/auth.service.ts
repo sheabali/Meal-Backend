@@ -5,6 +5,8 @@ import config from '../../config';
 import mongoose from 'mongoose';
 import User from '../User/user.model';
 import AppError from '../../errors/AppError';
+import { JwtPayload } from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 const loginUser = async (payload: IAuth) => {
   const session = await mongoose.startSession();
@@ -65,6 +67,60 @@ const loginUser = async (payload: IAuth) => {
   }
 };
 
+const changePassword = async (
+  userData: JwtPayload,
+  payload: { oldPassword: string; newPassword: string }
+) => {
+  console.log(
+    '🚀 ~ file: auth.service.ts:66 ~ changePassword ~ payload:',
+    payload
+  );
+  console.log(
+    '🚀 ~ file: auth.service.ts:66 ~ changePassword ~ userData:',
+    userData
+  );
+
+  // Checking if the user exists
+  const user = (await User.isUserExistsByCustomId(userData.userId)) as {
+    password: string;
+  };
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'This user is not found!');
+  }
+
+  // Checking if the old password is correct
+  const isPasswordMatched = await User.isPasswordMatched(
+    payload.oldPassword,
+    user?.password
+  );
+  if (!isPasswordMatched) {
+    throw new AppError(StatusCodes.FORBIDDEN, 'Password does not match!');
+  }
+
+  // Hash the new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(config.bcrypt_salt_rounds)
+  );
+
+  // Update the user's password in the database
+  await User.findOneAndUpdate(
+    {
+      _id: userData.userId,
+      role: userData.role,
+    },
+    {
+      password: newHashedPassword,
+      needsPasswordChange: false,
+      passwordChangedAt: new Date(),
+    },
+    { new: true }
+  );
+
+  return null;
+};
+
 export const AuthService = {
   loginUser,
+  changePassword,
 };

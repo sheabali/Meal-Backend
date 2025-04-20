@@ -3,7 +3,7 @@ import { Document, Model, ObjectId, Types } from 'mongoose';
 // Enum for User Roles
 export enum UserRole {
   CUSTOMER = 'customer',
-  MEAL_PROVIDER = 'meal_provider',
+  MEAL_PROVIDER = 'provider',
 }
 
 // User Schema Definition
@@ -29,6 +29,7 @@ export interface IUser extends Document {
 }
 
 export interface UserModel extends Model<IUser> {
+  isUserExistsByCustomId(userId: any): unknown;
   //instance methods for checking if passwords are matched
   isPasswordMatched(
     plainTextPassword: string,

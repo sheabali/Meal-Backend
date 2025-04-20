@@ -20,6 +20,7 @@ router.get(
 
 router.post(
   '/menu',
+
   auth(UserRole.MEAL_PROVIDER),
   multerUpload.fields([{ name: 'images' }]),
   parseBody,
@@ -34,5 +35,7 @@ router.patch(
   parseBody,
   MealController.updateMeal
 );
+
+router.delete('/:id', auth(UserRole.MEAL_PROVIDER), MealController.deleteMeal);
 
 export const MealRoutes = router;

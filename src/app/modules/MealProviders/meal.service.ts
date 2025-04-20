@@ -5,7 +5,7 @@ import { IImageFiles } from '../../interface/IImageFile';
 import { Meal } from './meal.model';
 import { IJwtPayload } from '../Auth/auth.interface';
 import User from '../User/user.model';
-import { UserRole } from '../User/user.interface';
+import { IUser, UserRole } from '../User/user.interface';
 import QueryBuilder from '../../builder/QueryBuilder';
 
 const getMyMenu = async (
@@ -16,15 +16,26 @@ const getMyMenu = async (
     _id: authUser.userId,
     role: UserRole.MEAL_PROVIDER,
   });
+  console.log('user', user);
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
   }
-  const mealsQuery = new QueryBuilder(Meal.find({ isDeleted: false }), query)
+  // const mealsQuery = new QueryBuilder(Meal.find({ isDeleted: false }), query)
+  //   .search(['name', 'description', 'ingredients'])
+  //   .filter()
+  //   .sort()
+  //   .paginate();
+
+  const mealsQuery = new QueryBuilder(
+    Meal.find({ mealProviderId: user._id, isDeleted: false, ...query }),
+    query
+  )
     .search(['name', 'description', 'ingredients'])
     .filter()
     .sort()
     .paginate();
+
   const meals = await mealsQuery.modelQuery.exec();
   const meta = await mealsQuery.getMetaData();
 
@@ -114,9 +125,47 @@ const updateMeal = async (
 
   return await Meal.findByIdAndUpdate(productId, payload, { new: true });
 };
+
+const deleteMeal = async (user: Partial<IUser>, id: string) => {
+  console.log('user', user);
+  const provider = await User.findOne({
+    _id: user?.userId,
+    role: UserRole.MEAL_PROVIDER,
+  });
+
+  console.log('id....', id);
+
+  if (!provider) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
+  }
+  const doesProviderOwnTheMeal = await Meal.findOne({
+    _id: id,
+    mealProviderId: user?.userId,
+  });
+
+  console.log('doesProviderOwnTheMeal', doesProviderOwnTheMeal);
+
+  if (!doesProviderOwnTheMeal) {
+    throw new AppError(StatusCodes.FORBIDDEN, "You don't own this meal");
+  }
+  // Find the existing meal first
+  const existingMeal = await Meal.findById(id);
+
+  if (!existingMeal) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Meal not found');
+  }
+  const result = await Meal.findByIdAndUpdate(
+    id,
+    { isDeleted: true },
+    { new: true }
+  );
+  return result;
+};
+
 export const MealService = {
   createMeal,
   getMyMenu,
   updateMeal,
   getSingleMeal,
+  deleteMeal,
 };

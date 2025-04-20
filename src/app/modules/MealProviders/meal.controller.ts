@@ -4,8 +4,6 @@ import sendResponse from '../../utils/sendResponse';
 import { IImageFiles } from '../../interface/IImageFile';
 import { MealService } from './meal.service';
 import { IJwtPayload } from '../Auth/auth.interface';
-import { Meal } from './meal.model';
-import { JwtPayload } from 'jsonwebtoken';
 
 const getSingleMeal = catchAsync(async (req, res) => {
   const { menuId } = req.params;
@@ -36,6 +34,7 @@ const getMyMenu = catchAsync(async (req, res) => {
 });
 
 const createMeal = catchAsync(async (req, res) => {
+  console.log('create meal', req.body);
   const result = await MealService.createMeal(
     req.body,
     req.files as IImageFiles,
@@ -71,9 +70,23 @@ const updateMeal = catchAsync(async (req, res) => {
   });
 });
 
+const deleteMeal = catchAsync(async (req, res) => {
+  const result = await MealService.deleteMeal(req.user, req.params.id);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: StatusCodes.OK,
+    message: 'Meal deleted successfully',
+    data: {
+      isDeleted: result?.isDeleted,
+    },
+  });
+});
+
 export const MealController = {
   createMeal,
   getMyMenu,
   updateMeal,
   getSingleMeal,
+  deleteMeal,
 };
