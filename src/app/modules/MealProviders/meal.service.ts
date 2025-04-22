@@ -8,6 +8,24 @@ import User from '../User/user.model';
 import { IUser, UserRole } from '../User/user.interface';
 import QueryBuilder from '../../builder/QueryBuilder';
 
+const getMyMenus = async (query: Record<string, unknown>) => {
+  const mealsQuery = new QueryBuilder(
+    Meal.find({ isDeleted: false, ...query }),
+    query
+  )
+    .search(['name', 'description', 'ingredients'])
+    .filter()
+    .sort()
+    .paginate();
+
+  const meals = await mealsQuery.modelQuery.exec();
+  const meta = await mealsQuery.getMetaData();
+
+  return {
+    meta: { ...meta },
+    meals: meals,
+  };
+};
 const getMyMenu = async (
   query: Record<string, unknown>,
   authUser: IJwtPayload
@@ -168,4 +186,5 @@ export const MealService = {
   updateMeal,
   getSingleMeal,
   deleteMeal,
+  getMyMenus,
 };

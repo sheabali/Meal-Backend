@@ -20,6 +20,15 @@ const getSingleMeal = catchAsync(async (req, res) => {
     data: result,
   });
 });
+const getMyMenus = catchAsync(async (req, res) => {
+  const result = await MealService.getMyMenus(req.query);
+  sendResponse(res, {
+    statusCode: StatusCodes.CREATED,
+    success: true,
+    message: 'Menu are retrieved successfully',
+    data: result,
+  });
+});
 const getMyMenu = catchAsync(async (req, res) => {
   const result = await MealService.getMyMenu(
     req.query,
@@ -89,4 +98,5 @@ export const MealController = {
   updateMeal,
   getSingleMeal,
   deleteMeal,
+  getMyMenus,
 };

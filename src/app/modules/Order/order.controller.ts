@@ -7,10 +7,10 @@ import { OrderService } from './order.service';
 import { IUser } from '../User/user.interface';
 
 const createOrder = catchAsync(async (req: Request, res: Response) => {
-  const result = await OrderService.createOrder(
-    req.body,
-    req.user as IJwtPayload
-  );
+  const result = await OrderService.createOrder({
+    ...req.body,
+    user: req.user as IJwtPayload,
+  });
 
   sendResponse(res, {
     statusCode: StatusCodes.CREATED,

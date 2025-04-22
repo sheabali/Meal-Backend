@@ -9,67 +9,69 @@ import { StatusCodes } from 'http-status-codes';
 import { Order } from './order.model';
 import config from '../../config';
 import { IUser, UserRole } from '../User/user.interface';
+import { startSession } from 'mongoose';
 
 const stripe = new Stripe(config.stripe_secret_key as string, {
   apiVersion: '2025-03-31.basil',
 });
+console.log('stripe', stripe); // geting stripe successfully
 
-const createOrder = async (orderData: IOrder, authUser: IJwtPayload) => {
-  if (!orderData.paymentMethodId) {
+const createOrder = async (payload: IOrder) => {
+  if (!payload?.paymentMethodId) {
     throw new AppError(StatusCodes.BAD_REQUEST, 'Payment method is required');
   }
-
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
+  const session = await startSession();
   try {
-    const isCustomerExists = await User.findById(orderData.customerId).session(
+    session.startTransaction();
+    // checking if the customer who ordered is exist
+    const isCustomerExists = await User.findById(payload.customerId).session(
       session
     );
     if (!isCustomerExists) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'Customer not found');
+      throw new AppError(StatusCodes.UNAUTHORIZED, 'The customer is not found');
     }
 
-    const orderMeal = await Meal.findById(orderData.meals).session(session);
-
-    if (!orderMeal) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'Meal not found');
+    // Step 1: Find the meal (inside transaction)
+    const productToOrder = await Meal.findById(payload?.meals).session(session);
+    if (!productToOrder) {
+      throw new AppError(
+        StatusCodes.NOT_FOUND,
+        'The Meal you want to order is not found'
+      );
     }
-
-    if (orderMeal.availability === false) {
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Meal not available');
+    if (!productToOrder.availability) {
+      throw new AppError(StatusCodes.FORBIDDEN, 'The meal is not available');
     }
-
-    console.log('orderMeal', orderMeal.mealProviderId); // geting orderMeal successfully
-    const isMealProviderExists = await User.findById(
-      orderMeal.mealProviderId
+    const mealProvider = await User.findById(
+      productToOrder.mealProviderId
     ).session(session);
 
-    console.log('isMealProviderExists', isMealProviderExists); // geting mealProviderId successfully
-
-    if (!isMealProviderExists) {
-      throw new AppError(StatusCodes.NOT_FOUND, 'Meal provider not found');
+    if (!mealProvider) {
+      throw new AppError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Meal provider not found'
+      );
     }
-    const { paymentMethodId, ...modifiedPayload } = orderData;
+    // Step 2: Create order (without payment info yet)
+    const { paymentMethodId, ...modifiedPayload } = payload;
     const order = await Order.create(
       [
         {
           ...modifiedPayload,
-          mealProviderId: orderMeal.mealProviderId,
-          amount: orderMeal.price,
+          mealProviderId: productToOrder.mealProviderId,
+          amount: productToOrder.price,
         },
       ],
       {
         session,
       }
     );
-
     if (!order.length) {
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Order not created');
+      throw new AppError(StatusCodes.BAD_REQUEST, 'Failed to create order');
     }
-
+    // Step 3: Process payment by creating a paymentIntent using the provided paymentMethodId
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: orderMeal.price * 100,
+      amount: productToOrder.price * 100,
       currency: 'usd',
       payment_method: paymentMethodId,
       confirm: true,
@@ -79,13 +81,18 @@ const createOrder = async (orderData: IOrder, authUser: IJwtPayload) => {
       },
     });
     if (!paymentIntent.id) {
-      throw new AppError(StatusCodes.BAD_REQUEST, 'Payment not created');
+      throw new AppError(
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        'Failed to process payment'
+      );
     }
 
+    // Step 4: Update Order with payment status
     if (paymentIntent.status === 'succeeded') {
       order[0].paymentStatus = 'PAID';
       order[0].paymentIntentId = paymentIntent.id;
       await order[0].save({ session });
+
       await session.commitTransaction();
       return {
         success: true,
@@ -95,11 +102,11 @@ const createOrder = async (orderData: IOrder, authUser: IJwtPayload) => {
     } else {
       throw new AppError(StatusCodes.BAD_REQUEST, 'Payment failed');
     }
-  } catch (error: any) {
+  } catch (error) {
     await session.abortTransaction();
     throw error;
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 };
 
@@ -110,20 +117,23 @@ const getOrders = async (user: IUser, query: Record<string, unknown>) => {
     _id: user.userId,
   });
 
-  console.log('customer', customer); // geting customer successfully
+  console.log('customer....', customer); // geting customer successfully
 
   if (!customer) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Customer not found');
   }
 
   const { role } = customer;
+  console.log('role', role); // geting role successfully
   let orders;
+  console.log('orders', orders); // geting orders successfully
+
   if (role === UserRole.CUSTOMER) {
-    orders = await Order.find({ customerId: user._id })
+    orders = await Order.find({ customerId: customer._id })
       .populate('meals')
       .populate('mealProviderId');
   } else if (role === UserRole.MEAL_PROVIDER) {
-    orders = await Order.find({ mealProviderId: user._id })
+    orders = await Order.find({ mealProviderId: customer._id })
       .populate('meals')
       .populate('customerId');
   } else {

@@ -10,11 +10,12 @@ import { UserRole } from '../User/user.interface';
 
 const router = Router();
 
+router.get('/my-menus', MealController.getMyMenus);
 router.get('/my-menu', auth(UserRole.MEAL_PROVIDER), MealController.getMyMenu);
+
 router.get(
   '/:menuId',
-  auth(UserRole.MEAL_PROVIDER),
-
+  auth(UserRole.MEAL_PROVIDER, UserRole.CUSTOMER),
   MealController.getSingleMeal
 );
 
