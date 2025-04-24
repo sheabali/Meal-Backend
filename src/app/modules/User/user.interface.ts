@@ -22,6 +22,8 @@ export interface IUser extends Document {
     userAgent?: string; // Optional user agent string
   };
   lastLogin: Date;
+  dietaryPreferences?: string[]; // for customers
+  cuisineSpecialties?: string[]; // for providers
   isActive: boolean;
   otpToken?: string | null;
   createdAt: Date;

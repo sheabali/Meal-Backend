@@ -14,7 +14,6 @@ import { startSession } from 'mongoose';
 const stripe = new Stripe(config.stripe_secret_key as string, {
   apiVersion: '2025-03-31.basil',
 });
-console.log('stripe', stripe); // geting stripe successfully
 
 const createOrder = async (payload: IOrder) => {
   if (!payload?.paymentMethodId) {

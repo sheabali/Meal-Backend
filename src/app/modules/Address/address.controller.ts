@@ -19,6 +19,7 @@ const createAddress = catchAsync(async (req, res) => {
 
 const updateAddress = catchAsync(async (req, res) => {
   const result = await AddressService.updateAddress(req.body, req.user);
+  console.log(req.body, 'req.body');
   sendResponse(res, {
     success: true,
     statusCode: StatusCodes.OK,

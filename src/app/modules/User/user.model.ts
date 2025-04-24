@@ -17,6 +17,11 @@ const userSchema = new Schema<IUser, UserModel>(
       unique: true,
       lowercase: true,
     },
+    phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     password: {
       type: String,
       required: true,
@@ -51,6 +56,8 @@ const userSchema = new Schema<IUser, UserModel>(
         type: String,
       },
     },
+    dietaryPreferences: [String],
+    cuisineSpecialties: [String],
     lastLogin: {
       type: Date,
       default: Date.now,

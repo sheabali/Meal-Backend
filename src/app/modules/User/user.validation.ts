@@ -23,6 +23,22 @@ const userValidationSchema = z.object({
   }),
 });
 
+export const updateCustomerProfileValidationSchema = {
+  body: z.object({
+    name: z.string().optional(),
+    phoneNumber: z.string().optional(),
+    dietaryPreferences: z.array(z.string()).optional(),
+  }),
+};
+export const updateProviderProfileValidationSchema = {
+  body: z.object({
+    name: z.string().optional(),
+    phoneNumber: z.string().optional(),
+    cuisinePreferences: z.array(z.string()).optional(),
+  }),
+};
+
 export const UserValidation = {
   userValidationSchema,
+  updateCustomerProfileValidationSchema,
 };

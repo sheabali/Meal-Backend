@@ -5,6 +5,8 @@ import AppError from '../../errors/AppError';
 import User from './user.model';
 import Customer from '../Customer/customer.modal';
 import { AuthService } from '../Auth/auth.service';
+import { IJwtPayload } from '../Auth/auth.interface';
+import auth from '../../middlewares/auth';
 
 // Function to register user
 const registerUser = async (userData: IUser) => {
@@ -56,6 +58,61 @@ const registerUser = async (userData: IUser) => {
   }
 };
 
+const updateCustomerProfile = async (
+  payload: Partial<IUser>,
+  user: Partial<IUser>
+) => {
+  const isCustomerExists = await User.findOne({
+    _id: user.userId,
+    role: UserRole.CUSTOMER,
+  });
+  if (!isCustomerExists) {
+    throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid customer');
+  }
+  const updatedUser = await User.findByIdAndUpdate(user.userId, payload, {
+    new: true,
+  });
+  return updatedUser;
+};
+
+const updateProviderProfile = async (
+  payload: Partial<IUser>,
+  user: Partial<IUser>
+) => {
+  const isProviderExists = await User.findOne({
+    _id: user.userId,
+    role: UserRole.MEAL_PROVIDER,
+  });
+  if (!isProviderExists) {
+    throw new AppError(StatusCodes.UNAUTHORIZED, 'Invalid provider');
+  }
+  const updatedUser = await User.findByIdAndUpdate(user.userId, payload, {
+    new: true,
+  });
+  console.log('updatedUser', updatedUser);
+  return updatedUser;
+};
+const getSingleUser = async (id: string, authUser: IJwtPayload) => {
+  console.log(authUser, 'authUser');
+  const user = await User.findOne({
+    _id: authUser?.userId,
+    role: authUser?.role,
+  });
+  console.log(user, 'user');
+  if (!user) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Invalid Customer');
+  }
+  const meal = await User.findById(id);
+  if (!meal) {
+    throw new AppError(StatusCodes.NOT_FOUND, 'Uesr not found');
+  }
+  const result = await User.findById(id);
+  return result;
+};
+
 export const UserServices = {
   registerUser,
+  updateCustomerProfile,
+  updateProviderProfile,
+  getSingleUser,
 };
