@@ -6,7 +6,6 @@ import User from './user.model';
 import Customer from '../Customer/customer.modal';
 import { AuthService } from '../Auth/auth.service';
 import { IJwtPayload } from '../Auth/auth.interface';
-import auth from '../../middlewares/auth';
 
 // Function to register user
 const registerUser = async (userData: IUser) => {
@@ -89,16 +88,15 @@ const updateProviderProfile = async (
   const updatedUser = await User.findByIdAndUpdate(user.userId, payload, {
     new: true,
   });
-  console.log('updatedUser', updatedUser);
+
   return updatedUser;
 };
 const getSingleUser = async (id: string, authUser: IJwtPayload) => {
-  console.log(authUser, 'authUser');
   const user = await User.findOne({
     _id: authUser?.userId,
     role: authUser?.role,
   });
-  console.log(user, 'user');
+
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Invalid Customer');
   }
