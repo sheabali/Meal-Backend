@@ -50,7 +50,6 @@ const updateProviderProfile = catchAsync(async (req, res) => {
 });
 const getSingleUser = catchAsync(async (req, res) => {
   const { id } = req.params;
-  console.log('id', id);
 
   const result = await UserServices.getSingleUser(id, req.user as IJwtPayload);
   sendResponse(res, {

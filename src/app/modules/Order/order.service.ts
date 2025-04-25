@@ -110,22 +110,17 @@ const createOrder = async (payload: IOrder) => {
 };
 
 const getOrders = async (user: IUser, query: Record<string, unknown>) => {
-  console.log('user', user); // geting user successfully
-
   const customer = await User.findOne({
     _id: user.userId,
   });
-
-  console.log('customer....', customer); // geting customer successfully
 
   if (!customer) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Customer not found');
   }
 
   const { role } = customer;
-  console.log('role', role); // geting role successfully
+
   let orders;
-  console.log('orders', orders); // geting orders successfully
 
   if (role === UserRole.CUSTOMER) {
     orders = await Order.find({ customerId: customer._id })
@@ -152,8 +147,7 @@ const updateOrderStatus = async (
   if (!order) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Order not found');
   }
-  console.log('params', id); // geting params successfully
-  console.log('status', status); // geting status successfully
+
   const result = await Order.findByIdAndUpdate(
     id,
     { status: status },

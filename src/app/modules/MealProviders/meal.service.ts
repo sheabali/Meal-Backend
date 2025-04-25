@@ -34,7 +34,6 @@ const getMyMenu = async (
     _id: authUser.userId,
     role: UserRole.MEAL_PROVIDER,
   });
-  console.log('user', user);
 
   if (!user) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
@@ -87,13 +86,11 @@ const createMeal = async (
   mealImages: IImageFiles,
   user: IJwtPayload
 ) => {
-  // console.log('user', user);
-
   const provider = await User.findOne({
     _id: user.userId,
     role: UserRole.MEAL_PROVIDER,
   });
-  console.log('provider', provider);
+
   if (!provider) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
   }
@@ -123,7 +120,6 @@ const updateMeal = async (
   if (!meal) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Meal not found');
   }
-  console.log('meal', meal);
 
   const provider = await User.findOne({
     _id: user.userId,
@@ -145,13 +141,10 @@ const updateMeal = async (
 };
 
 const deleteMeal = async (user: Partial<IUser>, id: string) => {
-  console.log('user', user);
   const provider = await User.findOne({
     _id: user?.userId,
     role: UserRole.MEAL_PROVIDER,
   });
-
-  console.log('id....', id);
 
   if (!provider) {
     throw new AppError(StatusCodes.NOT_FOUND, 'Invalid meal provider');
@@ -160,8 +153,6 @@ const deleteMeal = async (user: Partial<IUser>, id: string) => {
     _id: id,
     mealProviderId: user?.userId,
   });
-
-  console.log('doesProviderOwnTheMeal', doesProviderOwnTheMeal);
 
   if (!doesProviderOwnTheMeal) {
     throw new AppError(StatusCodes.FORBIDDEN, "You don't own this meal");

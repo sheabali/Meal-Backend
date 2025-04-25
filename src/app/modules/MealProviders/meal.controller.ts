@@ -43,7 +43,6 @@ const getMyMenu = catchAsync(async (req, res) => {
 });
 
 const createMeal = catchAsync(async (req, res) => {
-  console.log('create meal', req.body);
   const result = await MealService.createMeal(
     req.body,
     req.files as IImageFiles,
